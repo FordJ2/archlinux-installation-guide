@@ -10,7 +10,7 @@ ip addr
 
 ### disk config
 ```
-lsblk
+lsblk  # ctrl+f and replace /dev/sdb with the drive you would like to use
 
 cgdisk /dev/sdb && mkfs.fat -F32 /dev/sdb1 && mkswap /dev/sdb2 && mkfs.ext4 /dev/sdb3 && mount /dev/sdb3 /mnt && swapon /dev/sdb2 && mkdir -p /mnt/boot && mount /dev/sdb1 /mnt/boot && pacstrap /mnt base linux linux-firmware base-devel vi nano man-db && genfstab -U /mnt && genfstab -U /mnt >> /mnt/etc/fstab && arch-chroot /mnt
 
@@ -23,7 +23,7 @@ cgdisk /dev/sdb && mkfs.fat -F32 /dev/sdb1 && mkswap /dev/sdb2 && mkfs.ext4 /dev
 
 > [ NEW ]
 > (default)
-> 1G
+> 1G  # this is your swap size
 > 8200
 > swap
 
