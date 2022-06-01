@@ -2,16 +2,18 @@ Arch Linux
 ---
 
 ### boot medium
+you can ssh into the boot medium for ~~copy and pasting~~ ease of use
 ```
 systemctl start sshd
 passwd
-ip addr
+ip addr  
 ```
+
 
 ### disk config
 ```
-lsblk
-cgdisk /dev/sda
+lsblk  # change /dev/sda to whatever you want to use
+cgdisk /dev/sda  # creating the partitions
 >----->
 > [ NEW ]
 > (default)
@@ -21,7 +23,7 @@ cgdisk /dev/sda
 
 > [ NEW ]
 > (default)
-> 1G
+> 1G  # this is your swap size
 > 8200
 > swap
 
@@ -36,7 +38,7 @@ cgdisk /dev/sda
 >-----<
 
 lsblk
-mkfs.fat -F32 /dev/sda1
+mkfs.fat -F32 /dev/sda1  # formatting the partitions
 mkswap /dev/sda2
 mkfs.ext4 /dev/sda3
 
@@ -48,26 +50,26 @@ mount /dev/sda1 /mnt/boot
 
 ### boot config
 ```
-pacstrap /mnt base linux linux-firmware base-devel vi nano man-db
+pacstrap /mnt base linux linux-firmware base-devel vi nano man-db  # install basic packages
 
 genfstab -U /mnt
 genfstab -U /mnt >> /mnt/etc/fstab
 arch-chroot /mnt
 
-ln -sf /usr/share/zoneinfo/Canada/Eastern /etc/localtime
+ln -sf /usr/share/zoneinfo/Canada/Eastern /etc/localtime  # sorry, canada eh!
 hwclock --systohc
-vi /etc/locale.gen
+
+vi /etc/locale.gen  # keyboard stuffs
 >----->
 en_US.UTF-8 UTF-8
 >-----<
 locale-gen
-
 vi /etc/locale.conf
 >----->
 LANG=en_US.UTF-8
 >-----<
 
-vi /etc/hostname
+vi /etc/hostname  # user@arch:$
 >----->
 arch
 >-----<
@@ -80,14 +82,16 @@ mkinitcpio -P
 passwd
 pacman -Sy grub efibootmgr
 
+# if you are installing to a removable drive, uncomment --removable. otherwise, exclude.
 grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB  # --removable
 grub-mkconfig -o /boot/grub/grub.cfg
 
 exit
-shutdown -r now
-
-# LOGGED IN WOOOOOOOOOOOOOOO
+shutdown -r now  # when rebooting make sure you boot onto your fresh install, not back onto the boot medium
 ```
+
+YOU CAN LOG IN AS ROOT NOW :D
+---
 
 ### networking
 ```
@@ -98,7 +102,7 @@ networkctl list
 nano /etc/systemd/network/20-wired.network
 >----->
 [Match]
-Name=enp4s0
+Name=enp4s0  # use your interface device here
  
 [Network]
 DHCP=yes
@@ -109,10 +113,11 @@ systemctl enable systemd-networkd systemd-resolved
 ```
 
 ### users
+you cannot install `yay` on root
 ```
 useradd -g users -G wheel,storage,power -m wncry
 passwd wncry
-visudo
+visudo  # optional, but highly recommended
 >----->
 %wheel ALL=(ALL) NOPASSWD: ALL
 >-----<
@@ -120,7 +125,13 @@ visudo
 
 ### desktop environments
 ```
-pacman -S openssh htop git nvidia nvidia-utils cuda xorg-server
+# nvidia drivers
+pacman -S nvidia nvidia-utils 
+
+# amd drivers
+idk lol
+
+pacman -S openssh htop git xorg-server
 
 nano /etc/ssh/sshd_config
 >----->
@@ -130,6 +141,7 @@ PermitRootLogin yes
 systemctl restart sshd
 systemctl enable sshd
 
+# you will need to restart and login under your user to install yay
 git clone https://aur.archlinux.org/yay-bin.git
 cd yay-bin
 makepkg -si
@@ -160,45 +172,50 @@ systemctl enable lightdm
 ```
 
 #### ---- ratpoison
+my personal favourite :)
 ```
-yay -S ly
+yay -S ly  # display manager
 systemctl enable ly
 
-pacman -S ratpoison xcompmgr feh dmenu alacritty ranger
-yay -S librewolf
+pacman -S feh alacritty ranger
+yay -S librewolf  # this will take a long time. best to be run overnight (at least for my crappy hardware lol)
 
-sudo cp /etc/X11/sessions/ratpoison.desktop /usr/share/xsessions/
+pacman -S ratpoison  # desktop environment + window manager
+ls /usr/shar/xsessions/
+sudo cp /etc/X11/sessions/ratpoison.desktop /usr/share/xsessions/  # may not need to be done if it alr exists
+
 vim .ratpoisonrc
 >----->
-exec feh --bg-scale ~/.black.png
-exec /usr/bin/rpws init 4 -k
-exec ratpoison -c "banish"
+exec feh --bg-scale ~/.wallpaper.png  # sets a wallpaper
+exec /usr/bin/rpws init 4 -k  # opens four windows
+exec ratpoison -c "banish"  # moves mouse to the bottom left corner
 
-set border 3
+set border 3  # window padding
 
-bind a exec alacritty
+# application execution
+bind a exec alacritty  # executed by 'ctrl+t a'
 bind l exec librewolf
-bind M-D exec dmenu_run
 
-bind R resize
+# resizing and splitting
+bind R resize  # executed by 'ctrl+t shift+r'
 bind V vsplit
 bind H hsplit
 
-bind 1 exec rpws 1
+# environments
+bind 1 exec rpws 1  # executed by 'ctrl+t 1'
 bind 2 exec rpws 2
 bind 3 exec rpws 3
 bind 4 exec rpws 4
 >-----<
 
-cat /proc/asound/cards
+cat /proc/asound/cards  # optional step if you are having troubles with default audio devices
 sudo vim /etc/asound.conf
 >----->
 defaults.pcm.card 1
 defaults.ctl.card 1
 ```
 
-## gaming
-
+## gaming (nvidia)
 ```
 sudo ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
 
@@ -208,10 +225,11 @@ nano /etc/pacman.conf
 Include = /etc/pacman.d/mirrorlist
 >-----<
 
-pacman -Syu
+pacman -Syu  # requirements for steam gaming on linux
 sudo pacman -S --needed nvidia-dkms nvidia-utils lib32-nvidia-utils nvidia-settings vulkan-icd-loader lib32-vulkan-icd-loader lutris steam
 
-yay -S wine-stable proton librewolf-bin	#(beard time lessgooo)
+# installing wine
+yay -S wine-stable proton
 
 sudo pacman -S --needed wine-staging giflib lib32-giflib libpng lib32-libpng libldap lib32-libldap gnutls lib32-gnutls mpg123 lib32-mpg123 openal lib32-openal v4l-utils lib32-v4l-utils libpulse lib32-libpulse libgpg-error lib32-libgpg-error alsa-plugins lib32-alsa-plugins alsa-lib lib32-alsa-lib libjpeg-turbo lib32-libjpeg-turbo sqlite lib32-sqlite libxcomposite lib32-libxcomposite libxinerama lib32-libgcrypt libgcrypt lib32-libxinerama ncurses lib32-ncurses opencl-icd-loader lib32-opencl-icd-loader libxslt lib32-libxslt libva lib32-libva gtk3 lib32-gtk3 gst-plugins-base-libs lib32-gst-plugins-base-libs vulkan-icd-loader lib32-vulkan-icd-loader
 ```
