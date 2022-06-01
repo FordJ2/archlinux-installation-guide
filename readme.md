@@ -187,7 +187,7 @@ sudo cp /etc/X11/sessions/ratpoison.desktop /usr/share/xsessions/  # may not nee
 vim .ratpoisonrc
 >----->
 exec feh --bg-scale ~/.wallpaper.png  # sets a wallpaper
-exec /usr/bin/rpws init 4 -k  # opens four windows
+exec /usr/bin/rpws init 4 -k  # opens four environments
 exec ratpoison -c "banish"  # moves mouse to the bottom left corner
 
 set border 3  # window padding
