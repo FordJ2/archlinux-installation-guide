@@ -37,8 +37,8 @@ cgdisk /dev/sda  # creating the partitions
 > [ QUIT  ]
 >-----<
 
-lsblk
-mkfs.fat -F32 /dev/sda1  # formatting the partitions
+# formatting the partitions
+mkfs.fat -F32 /dev/sda1
 mkswap /dev/sda2
 mkfs.ext4 /dev/sda3
 
@@ -50,7 +50,7 @@ mount /dev/sda1 /mnt/boot
 
 ### boot config
 ```
-pacstrap /mnt base linux linux-firmware base-devel vi nano man-db  # install basic packages
+pacstrap /mnt base linux linux-firmware base-devel vi nano man-db  # install required packages
 
 genfstab -U /mnt
 genfstab -U /mnt >> /mnt/etc/fstab
@@ -83,7 +83,7 @@ passwd
 pacman -Sy grub efibootmgr
 
 # if you are installing to a removable drive, uncomment --removable. otherwise, exclude.
-grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB  # --removable
+grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB  #--removable
 grub-mkconfig -o /boot/grub/grub.cfg
 
 exit
@@ -97,12 +97,12 @@ YOU CAN LOG IN AS ROOT NOW :D
 ```
 systemctl start systemd-networkd systemd-resolved
 
-networkctl list
+networkctl list  # enp4s0 is my network interface device name
 
 nano /etc/systemd/network/20-wired.network
 >----->
 [Match]
-Name=enp4s0  # use your interface device here
+Name=enp4s0  # use your network interface device name here
  
 [Network]
 DHCP=yes
@@ -234,3 +234,5 @@ yay -S wine-stable proton
 sudo pacman -S --needed wine-staging giflib lib32-giflib libpng lib32-libpng libldap lib32-libldap gnutls lib32-gnutls mpg123 lib32-mpg123 openal lib32-openal v4l-utils lib32-v4l-utils libpulse lib32-libpulse libgpg-error lib32-libgpg-error alsa-plugins lib32-alsa-plugins alsa-lib lib32-alsa-lib libjpeg-turbo lib32-libjpeg-turbo sqlite lib32-sqlite libxcomposite lib32-libxcomposite libxinerama lib32-libgcrypt libgcrypt lib32-libxinerama ncurses lib32-ncurses opencl-icd-loader lib32-opencl-icd-loader libxslt lib32-libxslt libva lib32-libva gtk3 lib32-gtk3 gst-plugins-base-libs lib32-gst-plugins-base-libs vulkan-icd-loader lib32-vulkan-icd-loader
 ```
 
+# YOU JUST INSTALLED ARCH :D
+you can say with confidence that 'iusearchbtw'
