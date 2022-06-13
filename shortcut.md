@@ -44,5 +44,5 @@ ln -sf /usr/share/zoneinfo/Canada/Eastern /etc/localtime && hwclock --systohc &&
 shutdown -r now
 ```
 
-### resume at [networking](https://github.com/wncry/arch-linux-installation-guide/blob/main/README.md#networking)
+### resume at [networking](https://github.com/wncry/arch-linux-installation-guide/blob/main/readme.md#networking)
 
